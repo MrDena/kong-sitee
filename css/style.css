@@ -1,0 +1,1176 @@
+* {
+  box-sizing: border-box;
+}
+
+
+body {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  background-color: #111;
+  color: #eee;  
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+  
+}
+/* =========================
+   КНОПКА ЗВУКА
+========================= */
+.sound-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;  /* выравниваем по правому краю */
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 2px solid #ff0000;
+  color: #fff;
+  font-size: 22px;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.sound-toggle:hover {
+  background-color: rgba(255, 0, 0, 0.6);
+  transform: scale(1.1);
+}
+
+/* =========================
+   ГЛАВНЫЙ ЭКРАН (hero)
+========================= */
+.hero {
+  position: relative;
+
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  overflow: hidden;
+  padding-bottom: 60px;
+  background-position: center top;
+  background-size: cover;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  min-height: 400px;
+  overflow: hidden;
+  z-index: 1;
+  animation: pulseGlow 3s ease-in-out infinite alternate;
+}
+
+
+@keyframes pulseGlow {
+  0% {
+    filter: brightness(1) contrast(1);
+  }
+  100% {
+    filter: brightness(1.1) contrast(1.15);
+  }
+}
+
+
+
+#particles-js {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  pointer-events: none;
+  filter: brightness(1.5) contrast(1.4);
+  mix-blend-mode: screen;
+}
+
+.hero .btn {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  padding: 15px 40px;
+  font-size: 70px;
+  font-family: 'Orbitron', sans-serif;
+  color: #fff;
+  background: rgba(120, 0, 0, 0.2); /* полупрозрачный красный */
+  border: 1px solid rgba(255, 60, 60, 0.4);
+  border-radius: 40px;
+  text-decoration: none;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-shadow: 0 0 2px #000;
+
+  /* Переливающийся бордер с псевдоэлементом */
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+  backdrop-filter: blur(3px);
+}
+.hero .btn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 0, 0, 0.3),
+    rgba(120, 0, 0, 0.6),
+    rgba(255, 30, 30, 0.4)
+  );
+  animation: shimmer 6s linear infinite;
+  z-index: -1;
+  filter: blur(8px);
+}
+@keyframes shimmer {
+  0% {
+    transform: rotate(0deg) translateX(0);
+  }
+  100% {
+    transform: rotate(360deg) translateX(0);
+  }
+}
+.hero .btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 60, 60, 0.5);
+  background: rgba(120, 0, 0, 0.3);
+}
+/* Анимация градиента */
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+/* Вспышка при нажатии */
+.hero .btn:active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255, 80, 80, 0.4), transparent 70%);
+  animation: click-flash 0.4s ease;
+  z-index: -1;
+}
+@keyframes click-flash {
+  0% {
+    opacity: 1;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+/* =========================
+   ДЫМ НА ФОНЕ
+========================= */
+#smoke-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 0; /* позади искр */
+  pointer-events: none;
+}
+.smoke-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.smoke-gif {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  opacity: 0.22;
+}
+
+/* Небольшое движение дыма */
+@keyframes slowmove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-20px); }
+}
+
+.contacts {
+  position: relative;
+  padding: 100px 20px;
+  margin-top: 60px;
+  text-align: center;
+  overflow: hidden;
+  z-index: 1;
+
+  background: radial-gradient(circle at 30% 30%, rgba(88, 101, 242, 0.25), transparent 60%),
+              radial-gradient(circle at 70% 70%, rgba(230, 57, 70, 0.2), transparent 60%),
+              radial-gradient(circle at 50% 50%, rgba(30, 30, 30, 0.6), #0c0c0c);
+
+  animation: moveGradient 20s ease-in-out infinite;
+  background-size: 200% 200%;
+
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #111;
+  backdrop-filter: blur(2px);
+}
+
+/* Анимация как волны — в 2D */
+@keyframes moveGradient {
+  0%   { background-position: 0% 0%; }
+  25%  { background-position: 100% 0%; }
+  50%  { background-position: 100% 100%; }
+  75%  { background-position: 0% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+.meteor {
+  position: absolute;
+  top: 0;
+  width: 1.5px;
+  height: 0;
+  background: linear-gradient(to bottom, var(--meteor-color, rgba(255,255,255,0.9)), transparent);
+  opacity: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px var(--meteor-color, white));
+  border-radius: 50%;
+
+  /* анимация бесконечная */
+  animation: meteorFall var(--duration, 2.5s) ease-in infinite;
+  offset-path: path('M 0 0 Q 50 200 100 350');
+  offset-rotate: 45deg;
+  offset-distance: 0%;
+}
+
+@keyframes meteorFall {
+  0% {
+    offset-distance: 0%;
+    height: 0;
+    opacity: 0;
+  }
+  20% {
+    height: 20px;
+    opacity: 0.7;
+  }
+  50% {
+    height: var(--tail-length, 150px);
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+    height: 0;
+  }
+}
+.meteor.fade-out {
+  animation: fadeOutOpacity 1.2s forwards;
+}
+
+@keyframes fadeOutOpacity {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+
+
+
+
+
+
+.contacts h2 {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  color: #ccc9c7;
+  text-shadow: 0 0 12px #ff3300;
+}
+
+.contact-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+.contact-card {
+  position: relative;
+  overflow: visible; /* Чтобы частицы не обрезались */
+  cursor: pointer;
+  z-index: 2;
+  width: 250px;
+  height: 80px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(255, 40, 40, 0.2);
+  background: linear-gradient(145deg, #2a2a2a, #111);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+/* Частицы — маленькие огоньки */
+/* Частицы — маленькие огоньки */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px currentColor);
+  opacity: 0.8;
+  animation: particleFade 1.3s ease-out forwards;
+  will-change: transform, opacity;
+  z-index: 3;
+}
+
+
+@keyframes particleFade {
+  0% {
+    opacity: 0.8;
+    filter: drop-shadow(0 0 6px currentColor);
+  }
+  100% {
+    opacity: 0;
+    filter: drop-shadow(0 0 15px currentColor);
+  }
+}
+
+.contacts::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: url('../assets/bg-contact-texture.png') center/cover no-repeat;
+  opacity: 0.03;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes shine {
+  0% { transform: translate(-100%, -100%) rotate(25deg); }
+  100% { transform: translate(100%, 100%) rotate(25deg); }
+}
+.contact-card .card-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 2;
+}
+.contact-card:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 30px rgba(255, 50, 50, 0.6);
+  background: linear-gradient(145deg, #3a0000, #7a0000);
+}
+.arrow-indicator {
+  position: absolute;
+  left: 50%;
+  top: -32px; /* чуть выше иконки, подбери под свой дизайн */
+  transform: translateX(-50%);
+  width: 38px;
+  height: 38px;
+  z-index: 10;
+  pointer-events: none;
+  display: none;
+}
+.contact-card.active .arrow-indicator {
+  display: block;
+}
+
+.arrow-indicator svg {
+  width: 90%;
+  height: 110%;
+  animation: arrow-pulse 1.2s infinite ease-in-out;
+  filter: drop-shadow(0 0 5px red); /* Подсветка */
+
+  opacity: 0.9;
+}
+
+@keyframes arrow-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(10px); }
+}
+/* Пульсирующий эффект */
+@keyframes arrow-pulse {
+  0%, 100% {
+    transform: translateY(22px);
+  }
+  50% {
+    transform: translateY(-106px);
+  }
+}
+.contact-card i {
+  font-size: 1.8rem;
+  text-shadow: 0 0 8px rgba(255, 60, 60, 0.4);
+}
+
+.contact-card.discord:hover {
+  box-shadow: 0 0 20px rgba(114, 137, 218, 0.5);
+  border-color: rgba(114, 137, 218, 0.4); 
+}
+
+.contact-card.email:hover {
+  box-shadow: 0 0 20px rgba(200, 200, 200, 0.4);
+  border-color: rgba(200, 200, 200, 0.3);
+}
+
+.contact-card.apply:hover {
+  box-shadow: 0 0 20px rgba(255, 80, 40, 0.5);
+  border-color: rgba(255, 80, 40, 0.4);
+}
+
+/* Индивидуальные стили */
+.contact-card.discord {
+  background: linear-gradient(135deg, #7289da, #5865f2);
+}
+
+.contact-card.email {
+  background: linear-gradient(135deg, #555, #222);
+}
+
+.contact-card.apply {
+  background: linear-gradient(135deg, #ff1a1a, #990000);
+}
+
+/* Меню */
+.main-header {
+  position: fixed;
+  width: 100%;
+  top: 0; left: 0;
+  background: rgba(20,20,20,0.85);
+  z-index: 10001;
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.3);
+  backdrop-filter: blur(6px);
+}
+.nav-list {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  list-style: none;
+  margin: 0;
+  padding: 18px 0;
+}
+.nav-list a {
+  color: #fff;
+  font-size: 1.3em;
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 18px;
+  transition: background 0.3s, color 0.3s;
+}
+.nav-list a:hover {
+  background: #ff0000;
+  color: #fff;
+}
+
+/* Модальное окно */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10010;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(10,10,10,0.75);
+  backdrop-filter: blur(2px);
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s;
+  overflow: auto; /* 👈 это нужно */
+}
+.modal.show {
+  display: flex;
+  animation: modalFadeIn 0.5s;
+}
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.modal-content {
+  background: rgba(30,30,30,0.97);
+  border-radius: 24px;
+  padding: 36px 32px;
+  box-shadow: 0 8px 40px 0 rgba(0,0,0,0.5);
+  max-width: 700px;
+  width: 90vw;
+
+  max-height: 90vh;
+  overflow-y: auto;
+
+  animation: modalContentIn 0.6s cubic-bezier(.4,2,.6,1);
+  position: relative;
+}
+
+@keyframes modalContentIn {
+  from { transform: translateY(-60px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.close-btn {
+  position: absolute;
+  top: 18px; right: 22px;
+  font-size: 2em;
+  color: #ff0000;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close-btn:hover { color: #fff; }
+
+/* --- Карточки "О нас" --- */
+.about-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  margin-top: 24px;
+  justify-content: center;
+}
+.about-card {
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  width: 320px;
+  min-height: 220px;
+  border-radius: 18px;
+  background: #232323;
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.25);
+  opacity: 0;
+  transform: translateY(30px) scale(0.98);
+  animation: aboutCardIn 0.7s cubic-bezier(.4,2,.6,1) forwards;
+}
+.about-card:nth-child(1) { animation-delay: 0.08s; }
+.about-card:nth-child(2) { animation-delay: 0.18s; }
+.about-card:nth-child(3) { animation-delay: 0.28s; }
+.about-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.92) contrast(1.08);
+  transition: filter 0.3s;
+}
+.about-card::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; width: 100%; height: 100%;
+  background: linear-gradient(180deg,rgba(0,0,0,0.18) 0%,rgba(0,0,0,0.38) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+.about-text {
+  position: absolute;
+  left: 0; bottom: 0; width: 100%;
+  z-index: 2;
+  padding: 18px 16px 20px 16px;
+  background: linear-gradient(0deg,rgba(20,20,20,0.85) 80%,rgba(20,20,20,0.1) 100%);
+  color: #fff;
+}
+.about-text h3 {
+  margin: 0 0 8px 0;
+  color: #ff0000;
+  font-size: 1.1em;
+  letter-spacing: 1px;
+}
+.about-text p {
+  margin: 0;
+  color: #eee;
+  font-size: 1em;
+}
+.about-card:hover {
+  box-shadow: 0 8px 32px 0 #ff0000a0, 0 2px 16px 0 rgba(0,0,0,0.25);
+  filter: brightness(1.04);
+  transform: translateY(-8px) scale(1.03);
+}
+.about-card:hover img {
+  filter: brightness(1.1) contrast(1.2);
+}
+@keyframes aboutCardIn {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.section-fade {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s, transform 0.7s;
+}
+.section-fade.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.contact-card:hover i {
+  animation: icon-bounce 0.7s;
+}
+@keyframes icon-bounce {
+  0% { transform: scale(1) rotate(0deg);}
+  30% { transform: scale(1.2) rotate(-10deg);}
+  60% { transform: scale(0.95) rotate(10deg);}
+  100% { transform: scale(1) rotate(0deg);}
+}
+.to-top-btn {
+  position: fixed;
+  right: 20px;  /* ставим равным кнопке звука */
+  bottom: 90px;
+  z-index: 9999;
+  background: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 2em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.to-top-btn.visible {
+  opacity: 0.85;
+  pointer-events: auto;
+}
+
+.to-top-btn:hover {
+  background: #fff;
+  color: #ff0000;
+}
+
+
+/* =========================
+   СЕКЦИЯ ДОСТИЖЕНИЙ
+========================= */
+.achievements {
+  padding: 60px 0 40px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+.achievements h2 {
+  color: #ff0000;
+  margin-bottom: 80px;
+  font-size: 2em;
+  letter-spacing: 2px;
+}
+.achievements-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: center;
+}
+.achievement-card {
+  background: rgba(30,30,30,0.55);
+  border-radius: 18px;
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.10);
+  width: 260px;
+  padding: 24px 18px 18px 18px;
+  backdrop-filter: blur(3px) saturate(1.2);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(40px) scale(0.98) rotate(-6deg);
+  transition:
+    opacity 0.6s cubic-bezier(.4,1.6,.6,1),
+    transform 0.6s cubic-bezier(.4,2,.6,1),
+    box-shadow 0.4s,
+    background 0.4s,
+    filter 0.3s;
+  will-change: transform, box-shadow, opacity, filter;
+  z-index: 1;
+  pointer-events: none; /* чтобы не было ховера до появления */
+}
+/* Эффект "раздачи карт" */
+.achievements-grid.reveal .achievement-card {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotate(0deg);
+  pointer-events: auto;
+}
+.achievement-card img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 0 10px #f4f2f2aa);
+  transition: filter 0.3s;
+}
+.achievement-text h3 {
+  color: #fff;
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+}
+.achievement-text p {
+  color: #eee;
+  margin: 0;
+  font-size: 0.98em;
+}
+.achievement-card:hover {
+  transform: scale(1.08) translateY(-12px);
+  box-shadow: 0 12px 36px 0 #ff0000a0, 0 2px 16px 0 rgba(0,0,0,0.25);
+  background: linear-gradient(120deg,rgba(30,30,30,0.97) 70%,rgba(255,0,0,0.08) 100%);
+  z-index: 2;
+}
+.achievement-card:hover img {
+  filter: brightness(1.15) drop-shadow(0 0 16px #ff0000cc);
+}
+
+
+.achievements {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+/* Ховер и активное состояние карточки */
+.achievement-card:hover,
+.achievement-card:focus,
+.achievement-card.active {
+  opacity: 1;
+  background: rgba(30,30,30,0.97);
+  box-shadow: 0 12px 36px 0 #ff0000a0, 0 2px 16px 0 rgba(0,0,0,0.25), 0 0 32px #ff000044;
+  filter: brightness(1.08) saturate(1.2) drop-shadow(0 0 12px #ff0000cc);
+  animation: card-attract 0.22s cubic-bezier(.4,2,.6,1);
+  z-index: 3;
+}
+@keyframes card-attract {
+  0%   { transform: scale(1) rotate(0deg);}
+  30%  { transform: scale(1.04) rotate(-2deg);}
+  60%  { transform: scale(0.98) rotate(2deg);}
+  100% { transform: scale(1.08) translateY(-12px) rotate(0deg);}
+}
+
+.achievement-card:hover img,
+.achievement-card:focus img,
+.achievement-card.active img {
+  filter: brightness(1.18) drop-shadow(0 0 22px #ff0000cc);
+  transition: filter 0.3s;
+}
+
+.achievements-grid.reveal .achievement-card {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotate(0deg);
+}
+.achievement-card {
+  transition-delay: 0s;
+}
+
+.achievements-grid.reveal .achievement-card:nth-child(1) { transition-delay: 0.05s; }
+.achievements-grid.reveal .achievement-card:nth-child(2) { transition-delay: 0.15s; }
+.achievements-grid.reveal .achievement-card:nth-child(3) { transition-delay: 0.25s; }
+.achievements-grid.reveal .achievement-card:nth-child(4) { transition-delay: 0.35s; }
+.achievements-grid.reveal .achievement-card:nth-child(5) { transition-delay: 0.45s; }
+.achievements-grid.reveal .achievement-card:nth-child(6) { transition-delay: 0.55s; }
+/* --- Фоновые элементы секции достижений --- */
+.lisvy-bg-anim {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  width: 100%;
+  height: 180px;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+}
+.lisvy-gif-bg {
+  position: absolute;
+  left: -180px;
+  bottom: 0;
+  width: 180px;
+  height: auto;
+  opacity: 0.7;
+  filter: drop-shadow(0 0 0px #ebeaeacc);
+  animation: lisvy-run 6s linear infinite;
+}
+@keyframes lisvy-run {
+  0% {
+    left: -180px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    left: 100vw;
+    opacity: 0;
+  }
+}
+.lisvy-phrase-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch; /* растягиваем по ширине */
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  padding: 0 2vw; /* небольшой отступ от краёв */
+}
+#lisvy-phrase-text {
+  color: #fff;
+  width: 100%;
+  font-size: clamp(32px, 10vw, 120px); /* адаптивно, но не слишком мелко/крупно */
+  text-shadow: 0 0 32px #f0efef, 0 0 8px #000;
+  opacity: 0;
+  transition: opacity 0.8s, filter 0.8s;
+  letter-spacing: 0.18em;
+  text-align: center;
+  font-family: 'Orbitron', Arial, sans-serif;
+  font-weight: bold;
+  line-height: 1.1;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+  filter: blur(0.5px);
+  white-space: pre-line; /* перенос строк если что */
+  word-break: break-word;
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 100vw;
+}
+#lisvy-phrase-img {
+  width: clamp(60px, 12vw, 220px);
+  margin: 32px auto 0 auto;
+  opacity: 0;
+  transition: opacity 0.8s, filter 0.8s;
+  filter: blur(2px) drop-shadow(0 0 18px #ff0000cc);
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+  display: block;
+}
+#lisvy-phrase-text.visible,
+#lisvy-phrase-img.visible {
+  opacity: 0.18;
+  filter: blur(0.5px);
+}
+
+/* =========================
+   АДАПТИВНОСТЬ ДЛЯ ВСЕХ УСТРОЙСТВ
+========================= */
+
+/* --- HERO: адаптивность для фона и кнопки --- */
+@media (max-width: 900px) {
+  .hero {
+    height: 70vh;
+    padding-bottom: 32px;
+  }
+  .hero .btn {
+    font-size: 36px;
+    padding: 12px 28px;
+  }
+}
+@media (max-width: 700px) {
+  .hero {
+    height: 54vh;
+    min-height: 220px;
+    padding-bottom: 18px;
+    justify-content: flex-end;
+  }
+}
+@media (max-width: 500px) {
+  .hero {
+    height: 44vh;
+    min-height: 140px;
+    padding-bottom: 8px;
+  }
+}
+
+/* --- Адаптивность стрелки arrow-indicator --- */
+@media (max-width: 700px) {
+  .arrow-indicator {
+    width: 48px;
+    height: 48px;
+    left: 50%;
+    top: auto;
+    bottom: 12px;
+    transform: translateX(-50%);
+    /* Если нужно, можешь добавить z-index: 20; */
+  }
+  .arrow-indicator svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+/* --- Сетка достижений и карточки --- */
+@media (max-width: 1100px) {
+  .achievements-grid {
+    gap: 18px;
+  }
+  .achievement-card {
+    width: 44vw;
+    min-width: 210px;
+    max-width: 340px;
+  }
+}
+@media (max-width: 900px) {
+  .achievements-grid {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .achievement-card {
+    width: 90vw;
+    min-width: 0;
+    max-width: 400px;
+  }
+  .achievement-card img {
+    width: 70px;
+    height: 70px;
+  }
+}
+@media (max-width: 700px) {
+  .achievements-grid {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .achievement-card {
+    width: 96vw;
+    max-width: 99vw;
+    padding: 18px 8px 14px 8px;
+  }
+  .achievement-card img {
+    width: 54px;
+    height: 54px;
+  }
+  #lisvy-phrase-text {
+    font-size: clamp(16px, 8vw, 36px);
+    padding: 0 2vw;
+  }
+  #lisvy-phrase-img {
+    width: clamp(32px, 22vw, 80px);
+    margin-top: 10px;
+  }
+  .achievements h2 {
+    font-size: 1.2em;
+    margin-bottom: 36px;
+  }
+}
+
+/* --- Контакты --- */
+@media (max-width: 900px) {
+  .contact-grid {
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+  }
+  .contact-card {
+    width: 90vw;
+    min-width: 0;
+    max-width: 400px;
+    height: 70px;
+    font-size: 16px;
+  }
+}
+@media (max-width: 600px) {
+  .contacts {
+    padding: 60px 4vw;
+  }
+  .contact-card {
+    width: 98vw;
+    font-size: 15px;
+    height: 60px;
+  }
+  .contacts h2 {
+    font-size: 1.1em;
+    margin-bottom: 24px;
+  }
+}
+
+/* --- Модальное окно и about --- */
+@media (max-width: 700px) {
+  .modal-content {
+    width: 96vw;
+    max-width: 96vw;
+    padding: 16px 10px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    max-height: 90vh;
+  }
+
+  .about-previews {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .about-card {
+    width: 100%;
+    max-width: 94vw;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border-radius: 16px;
+
+    /* отключаем анимации, НО включаем отображение */
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .about-card img {
+    width: 100%;
+    height: auto;
+    max-height: 180px;
+    object-fit: cover;
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+
+  .about-text {
+    padding: 12px;
+    background: linear-gradient(0deg,rgba(20,20,20,0.85) 85%,rgba(20,20,20,0.1) 100%);
+  }
+
+  .about-text h3 {
+    font-size: 1em;
+    margin-bottom: 6px;
+  }
+
+  .about-text p {
+    font-size: 0.95em;
+  }
+}
+
+
+
+/* --- Меню --- */
+@media (max-width: 700px) {
+  .main-header {
+    padding: 0;
+  }
+  .nav-list {
+    gap: 12px;
+    padding: 10px 0;
+    font-size: 1em;
+  }
+  .nav-list a {
+    font-size: 1em;
+    padding: 6px 10px;
+  }
+}
+
+/* --- Кнопка "Наверх" --- */
+@media (max-width: 700px) {
+  .sound-toggle {
+    right: 10px;     /* равняем с to-top-btn */
+    bottom: 60px;    /* чуть выше кнопки наверх */
+    width: 38px;
+    height: 38px;
+    font-size: 18px; /* если надо уменьшить */
+  }
+  .to-top-btn {
+    right: 10px;
+    bottom: 10px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.2em;
+  }
+}
+
+@media (max-width: 900px) {
+  .smoke-layer, #smoke-layer {
+    height: 60vh !important;
+    min-height: 120px;
+    top: 0;
+  }
+  .smoke-gif {
+    height: 60vh !important;
+    min-height: 120px;
+    opacity: 0.16 !important;
+    object-fit: cover;
+    top: 0;
+  }
+}
+@media (max-width: 600px) {
+  .smoke-layer, #smoke-layer {
+    height: 38vh !important;
+    min-height: 60px;
+    top: 0;
+  }
+  .smoke-gif {
+    height: 38vh !important;
+    min-height: 60px;
+    opacity: 0.12 !important;
+    object-fit: cover;
+    top: 0;
+  }
+}
+@media (max-width: 900px) {
+  .hero,
+  .smoke-layer,
+  .smoke-gif {
+    height: 60vh !important;
+    min-height: 120px;
+  }
+}
+@media (max-width: 600px) {
+  .hero,
+  .smoke-layer,
+  .smoke-gif {
+    height: 38vh !important;
+    min-height: 60px;
+  }
+}
+
+/* --- Фоновые элементы --- */
+@media (max-width: 700px) {
+  .lisvy-bg-anim {
+    height: 80px;
+  }
+  .lisvy-gif-bg {
+    width: 80px;
+    left: -80px;
+  }
+}
+.meteor, .particle, .about-card { will-change: transform, opacity; }
+
+
+
+
+
+
+.hero-img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+@media (max-width: 900px) {
+  .hero-img { height: 60vh; }
+}
+@media (max-width: 600px) {
+  .hero-img { height: 38vh; }
+}
+
+/* Адаптированные варинты */
+
+/* Адаптированные варинты */
+#hero {
+  scroll-margin-top: 80px;
+}
