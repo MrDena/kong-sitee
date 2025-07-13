@@ -42,15 +42,15 @@ const phraseImg = document.getElementById('lisvy-phrase-img');
 const sequence = [
   { text: 'Слово', img: '', pause: 1500 },
   { text: '', img: '', pause: 400 },
-  { text: 'Смерть', img: '', pause: 1500 },
+  { text: 'Rom', img: '', pause: 1500 },
   { text: 'И Слово', img: '', pause: 1000 },
-  { text: 'Rom', img: 'assets/Rom.png', pause: 1500 },
-  { text: '', img: '', pause: 400 },
-  { text: '', img: 'assets/Rom.png', pause: 1200 },
-  { text: 'Смерть', img: 'assets/Death.png', pause: 1200 },
+  { text: 'Смерть', img: 'assets/Death.png', pause: 1500 },
   { text: '', img: '', pause: 400 },
   { text: '', img: 'assets/Death.png', pause: 1200 },
-  { text: 'Для вас звучит одно и то же', img: '', pause: 2000 }
+  { text: 'Rom', img: 'assets/Rom.png', pause: 1200 },
+  { text: '', img: '', pause: 400 },
+  { text: '', img: 'assets/Rom.png', pause: 1200 },
+  { text: 'Для вас означает одно и то же', img: '', pause: 2000 }
 ];
 let idx = 0;
 let phraseTimeout = null;
