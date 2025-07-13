@@ -1174,3 +1174,20 @@ body {
 #hero {
   scroll-margin-top: 80px;
 }
+.site-footer {
+  background: #111;
+  color: #ccc;
+  padding: 20px 0;
+  text-align: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+}
+
+.site-footer a {
+  color: #ff0000;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
