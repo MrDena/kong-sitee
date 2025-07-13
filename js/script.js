@@ -204,7 +204,8 @@ if (phraseText && phraseImg) showPhrase();
   const metalSounds = [
     document.getElementById("metal-hit-1"),
     document.getElementById("metal-hit-2"),
-    document.getElementById("metal-hit-3")
+    document.getElementById("metal-hit-3"),
+    document.getElementById("metal-hit-4")
   ];
   const toggleBtn = document.getElementById("toggle-sound");
   let isMuted = false;
