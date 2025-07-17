@@ -213,6 +213,30 @@
     </div>
   </section>
 
+
+
+
+
+<!-- Модалка приветствия -->
+<div id="welcome-modal" class="welcome-modal hidden">
+  <video autoplay muted loop class="welcome-bg" playsinline>
+    <source src="audio/X.mp4" type="video/mp4">
+    Ваш браузер не поддерживает видео.
+  </video>
+
+<div class="welcome-content">
+  <h2>Добро пожаловать в клан!</h2>
+  <p id="typewriter-text" class="typewriter-target"></p>
+  <!-- Пул звуков -->
+  <audio class="typewriter-sound" src="audio/keyboard.mp3" preload="auto"></audio>
+
+
+
+  <button id="welcome-close-btn" disabled>Понял (15)</button>
+</div>
+
+</div>
+
   <!-- Тосты и пользовательский дисплей -->
   <div id="toast" class="toast"></div>
   <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 10000;"></div>
