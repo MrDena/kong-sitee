@@ -198,41 +198,167 @@ if (phraseText && phraseImg) showPhrase();
 
 
 
-  // --- Звук ---
-  const smokeSound = document.getElementById("audio-smoke");
-  const sparkSound = document.getElementById("audio-spark");
-  const metalSounds = [
-    document.getElementById("metal-hit-1"),
-    document.getElementById("metal-hit-2"),
-    document.getElementById("metal-hit-3"),
-    document.getElementById("metal-hit-4")
-  ];
-  const toggleBtn = document.getElementById("toggle-sound");
-  let isMuted = false;
-  document.addEventListener('click', () => {
-    smokeSound.play().catch(() => {});
-  }, { once: true });
+// --- Звук ---
+const smokeSound = document.getElementById("audio-smoke");
+const sparkSound = document.getElementById("audio-spark");
+const metalSounds = [
+  document.getElementById("metal-hit-1"),
+  document.getElementById("metal-hit-2"),
+  document.getElementById("metal-hit-3"),
+  document.getElementById("metal-hit-4")
+];
+const toggleBtn = document.getElementById("toggle-sound");
+const welcomeBtn = document.getElementById("welcome-close-btn");
+let isMuted = localStorage.getItem("sound-muted") === "true";
+let soundStarted = false;
+
+// Громкости
+smokeSound.volume = 0.5;
+sparkSound.volume = 0.6;
+metalSounds.forEach((sound, i) => {
+  sound.volume = (i === 3) ? 0.15 : 0.9;
+});
+
+// Функция показа тоста
+function showToast(message, duration = 4000) {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = "toast-message show";
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    toast.classList.add("hide");
+  }, duration);
+
+  toast.addEventListener("animationend", (e) => {
+    if (e.animationName === "toastOut") toast.remove();
+  });
+}
+
+// Функция запуска звуков
+function startSounds() {
+  if (soundStarted || isMuted) return;
   smokeSound.loop = true;
-  smokeSound.volume = 0.5;
+  smokeSound.play().catch(() => {});
+  soundStarted = true;
+
   setInterval(() => {
     if (isMuted) return;
     sparkSound.currentTime = 0;
     sparkSound.play().catch(() => {});
   }, Math.random() * 3000 + 3000);
+
   setInterval(() => {
     if (isMuted) return;
     const rand = Math.floor(Math.random() * metalSounds.length);
     metalSounds[rand].currentTime = 0;
     metalSounds[rand].play().catch(() => {});
   }, Math.random() * 4000 + 4000);
-  toggleBtn.addEventListener("click", () => {
-    isMuted = !isMuted;
-    smokeSound.muted = isMuted;
-    sparkSound.muted = isMuted;
-    metalSounds.forEach(s => s.muted = isMuted);
-    toggleBtn.textContent = isMuted ? "🔇" : "🔊";
-  });
+
+  showToast("🔊 Звуки включены. Добро пожаловать в KONG.", 5000);
+}
+
+// Переключатель звука (кнопка 🔇/🔊)
+toggleBtn.addEventListener("click", () => {
+  isMuted = !isMuted;
+  smokeSound.muted = isMuted;
+  sparkSound.muted = isMuted;
+  metalSounds.forEach((s) => (s.muted = isMuted));
+  toggleBtn.textContent = isMuted ? "🔇" : "🔊";
+  localStorage.setItem("sound-muted", isMuted);
+
+  showToast(isMuted ? "🔇 Звук отключён" : "🔊 Звук включён", 3500);
+
+  if (isMuted) {
+    localStorage.setItem("sound-reminder-date", new Date().toISOString().slice(0, 10));
+  } else {
+    localStorage.removeItem("sound-reminder-date");
+  }
+  // 💡 ВАЖНО: запустить звуки, если они ещё не стартовали
+  if (!soundStarted && !isMuted) {
+    startSounds();
+  }
 });
+
+// Применить начальное состояние
+smokeSound.muted = isMuted;
+sparkSound.muted = isMuted;
+metalSounds.forEach((s) => (s.muted = isMuted));
+toggleBtn.textContent = isMuted ? "🔇" : "🔊";
+
+// Напоминание о звуке
+const lastReminded = localStorage.getItem("sound-reminder-date");
+const today = new Date().toISOString().slice(0, 10);
+if (isMuted && lastReminded !== today) {
+  showToast("🔇 Звук отключён. Нажмите 🔊 внизу, чтобы включить.", 6000);
+  localStorage.setItem("sound-reminder-date", today);
+}
+
+// Запуск только после клика "Понял"
+if (welcomeBtn) {
+  welcomeBtn.addEventListener("click", () => {
+    // Прячем окно (если ещё не убрано)
+    document.getElementById("welcome-modal")?.classList.add("hidden");
+
+    // Стартуем звуки
+    startSounds();
+  });
+}
+});
+
+
+
+  const textContainer = document.getElementById("typewriter-text");
+  const typingSound = new Audio("audio/keyboard.mp3"); // Заменить путь на актуальный
+  typingSound.volume = 0.6;
+
+  const rawHtml = `Мы не дефолтный клан, нацеленный на топ ПВП или рейтинг.<br> 
+  У нас тёплая атмосфера, почти круглосуточный онлайн и всегда можно найти, с кем поиграть в STALCRAFT.<br><br> 
+  ГП — это не весь клан, а лишь его часть, отобранная для КВ. Мы ищем тех, кто онлайн 7/7 и хорошо понимает игру.<br><br> 
+  Наши гильзы стабильны: от 5000 в неделю. <br><br> 
+  Хочешь к нам? Просто заходи в дискорд и оставляй тикет, или играй с нами вне ГП. <br><br> 
+  <b>P.S.</b> ЧСВшников и токсиков из клан-ньюс сразу лесом 🚫`;
+
+  // Разбиваем на массив символов + HTML теги как отдельные блоки
+  const parts = [];
+  const regex = /(<[^>]+>)|([^<])/g;
+  let match;
+  while ((match = regex.exec(rawHtml))) {
+    if (match[1]) parts.push(match[1]); // тег
+    else if (match[2]) parts.push(match[2]); // символ
+  }
+
+  const totalDuration = 15000; // 15 секунд
+  const delay = totalDuration / parts.length;
+
+  let i = 0;
+  function type() {
+    if (i === 0) {
+      typingSound.currentTime = 0;
+      typingSound.play().catch(() => {});
+    }
+
+    if (i < parts.length) {
+      textContainer.innerHTML += parts[i++];
+      setTimeout(type, delay);
+    } else {
+      typingSound.pause();
+      typingSound.currentTime = 0;
+    }
+  }
+
+  // Запускаем только если элемент существует
+  if (textContainer) {
+    textContainer.innerHTML = "";
+    type();
+  }
+
+
+
 document.querySelectorAll('.achievement-card').forEach(card => {
   card.addEventListener('click', function(e) {
     // Снимаем active со всех карточек
@@ -286,3 +412,38 @@ function startArrowAnimation() {
 
 startArrowAnimation();
 window.addEventListener('resize', startArrowAnimation);
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const welcomeModal = document.getElementById("welcome-modal");
+  const welcomeBtn = document.getElementById("welcome-close-btn");
+
+  if (!welcomeModal || !welcomeBtn) return;
+
+  let countdown = 15;
+  welcomeBtn.textContent = `Понял (${countdown})`;
+  welcomeBtn.disabled = true;
+
+  const interval = setInterval(() => {
+    countdown--;
+    if (countdown <= 0) {
+      clearInterval(interval);
+      welcomeBtn.disabled = false;
+      welcomeBtn.textContent = "Понял";
+    } else {
+      welcomeBtn.textContent = `Понял (${countdown})`;
+    }
+  }, 1000);
+
+  // Показать модалку
+  welcomeModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+
+  // Закрытие модалки
+  welcomeBtn.addEventListener("click", () => {
+    welcomeModal.classList.add("hidden");
+    document.body.style.overflow = "";
+  });
+
+  
+});
