@@ -42,15 +42,15 @@ const phraseImg = document.getElementById('lisvy-phrase-img');
 const sequence = [
   { text: 'Слово', img: '', pause: 1500 },
   { text: '', img: '', pause: 400 },
-  { text: 'Rom', img: '', pause: 1500 },
+  { text: 'Смерть', img: '', pause: 1500 },
   { text: 'И Слово', img: '', pause: 1000 },
-  { text: 'Смерть', img: 'assets/Death.png', pause: 1500 },
+  { text: 'Rom', img: 'assets/Rom.png', pause: 1500 },
+  { text: '', img: '', pause: 400 },
+  { text: '', img: 'assets/rom.png', pause: 1200 },
+  { text: 'Смерть', img: 'assets/Death.png', pause: 1200 },
   { text: '', img: '', pause: 400 },
   { text: '', img: 'assets/Death.png', pause: 1200 },
-  { text: 'Rom', img: 'assets/Rom.png', pause: 1200 },
-  { text: '', img: '', pause: 400 },
-  { text: '', img: 'assets/Rom.png', pause: 1200 },
-  { text: 'Для вас означает одно и то же', img: '', pause: 2000 }
+  { text: 'Для вас звучит одно и то же', img: '', pause: 2000 }
 ];
 let idx = 0;
 let phraseTimeout = null;
@@ -298,67 +298,131 @@ if (isMuted && lastReminded !== today) {
   localStorage.setItem("sound-reminder-date", today);
 }
 
-// Запуск только после клика "Понял"
-if (welcomeBtn) {
-  welcomeBtn.addEventListener("click", () => {
-    // Прячем окно (если ещё не убрано)
-    document.getElementById("welcome-modal")?.classList.add("hidden");
+  // Функция запуска звуков
+  function tryStartSounds() {
+    if (!isMuted && !soundStarted) {
+      startSounds();
+    }
+  }
+  // --- Ограниченный показ модалки + запуск печатной анимации и звука ---
+const welcomeModal = document.getElementById("welcome-modal");
 
-    // Стартуем звуки
-    startSounds();
-  });
+if (welcomeModal && welcomeBtn) {
+  const today = new Date().toISOString().slice(0, 10);
+  const shownData = JSON.parse(localStorage.getItem("welcome-shown") || "{}");
+  const shownCount = shownData.date === today ? shownData.count || 0 : 0;
+
+  if (shownCount < 3) {
+    // Показать модалку
+    welcomeModal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+
+    // Блокируем кнопку "Понял" на 15 секунд
+    let countdown = 15;
+    welcomeBtn.textContent = `Понял (${countdown})`;
+    welcomeBtn.disabled = true;
+
+    const interval = setInterval(() => {
+      countdown--;
+      if (countdown <= 0) {
+        clearInterval(interval);
+        welcomeBtn.disabled = false;
+        welcomeBtn.textContent = "Понял";
+      } else {
+        welcomeBtn.textContent = `Понял (${countdown})`;
+      }
+    }, 1000);
+
+    // Обновляем счётчик показов
+    localStorage.setItem("welcome-shown", JSON.stringify({ date: today, count: shownCount + 1 }));
+
+    // ⌨️ Запуск анимации и звука — только при показе
+    const textContainer = document.getElementById("typewriter-text");
+    const typingSound = new Audio("audio/keyboard.mp3");
+    typingSound.volume = 0.9;
+
+    const rawHtml = `Мы не дефолтный клан, нацеленный на топ ПВП или рейтинг.<br> 
+    У нас тёплая атмосфера, почти круглосуточный онлайн и всегда можно найти, с кем поиграть в STALCRAFT.<br><br> 
+    ГП — это не весь клан, а лишь его часть, отобранная для КВ. Мы ищем тех, кто онлайн 7/7 и хорошо понимает игру.<br><br> 
+    Наши гильзы стабильны: от 5000 в неделю. <br><br> 
+    Хочешь к нам? Просто заходи в дискорд и оставляй тикет, или играй с нами вне ГП. <br><br> 
+    <b>P.S.</b> ЧСВшников и токсиков из клан-ньюс сразу лесом 🚫`;
+
+    const parts = [];
+    const regex = /(<[^>]+>)|([^<])/g;
+    let match;
+    while ((match = regex.exec(rawHtml))) {
+      if (match[1]) parts.push(match[1]);
+      else if (match[2]) parts.push(match[2]);
+    }
+
+    const totalDuration = 15000;
+    const delay = totalDuration / parts.length;
+    let i = 0;
+
+    function type() {
+      if (i === 0) {
+        typingSound.currentTime = 0;
+        typingSound.src = "audio/keyboard.mp3";
+        typingSound.play().catch(() => {});
+      }
+
+      if (i < parts.length) {
+        textContainer.innerHTML += parts[i++];
+        setTimeout(type, delay);
+      } else {
+        typingSound.pause();
+        typingSound.currentTime = 0;
+        typingSound.src = "";
+      }
+    }
+
+    if (textContainer) {
+      textContainer.innerHTML = "";
+      type();
+    }
+
+    // Закрытие модалки
+    welcomeBtn.addEventListener("click", () => {
+      welcomeModal.classList.add("hidden");
+      document.body.style.overflow = "";
+      
+    });
+  }
 }
+
+  // Проверяем, показывается ли модалка
+
+// В обработчике кнопки "Понял"
+welcomeBtn.addEventListener("click", () => {
+  welcomeModal.classList.add("hidden");
+  document.body.style.overflow = "";
+
+  if (!isMuted && !soundStarted) {
+    startSounds();
+  }
 });
 
-
-
-  const textContainer = document.getElementById("typewriter-text");
-  const typingSound = new Audio("audio/keyboard.mp3"); // Заменить путь на актуальный
-  typingSound.volume = 0.6;
-
-  const rawHtml = `Мы не дефолтный клан, нацеленный на топ ПВП или рейтинг.<br> 
-  У нас тёплая атмосфера, почти круглосуточный онлайн и всегда можно найти, с кем поиграть в STALCRAFT.<br><br> 
-  ГП — это не весь клан, а лишь его часть, отобранная для КВ. Мы ищем тех, кто онлайн 7/7 и хорошо понимает игру.<br><br> 
-  Наши гильзы стабильны: от 5000 в неделю. <br><br> 
-  Хочешь к нам? Просто заходи в дискорд и оставляй тикет, или играй с нами вне ГП. <br><br> 
-  <b>P.S.</b> ЧСВшников и токсиков из клан-ньюс сразу лесом 🚫`;
-
-  // Разбиваем на массив символов + HTML теги как отдельные блоки
-  const parts = [];
-  const regex = /(<[^>]+>)|([^<])/g;
-  let match;
-  while ((match = regex.exec(rawHtml))) {
-    if (match[1]) parts.push(match[1]); // тег
-    else if (match[2]) parts.push(match[2]); // символ
-  }
-
-  const totalDuration = 15000; // 15 секунд
-  const delay = totalDuration / parts.length;
-
-  let i = 0;
-  function type() {
-    if (i === 0) {
-      typingSound.currentTime = 0;
-      typingSound.play().catch(() => {});
-    }
-
-    if (i < parts.length) {
-      textContainer.innerHTML += parts[i++];
-      setTimeout(type, delay);
-    } else {
-      typingSound.pause();
-      typingSound.currentTime = 0;
-    }
-  }
-
-  // Запускаем только если элемент существует
-  if (textContainer) {
-    textContainer.innerHTML = "";
-    type();
-  }
+// Проверяем показ модалки и запускаем звук, если модалки нет
+if (!welcomeModal.classList.contains("hidden")) {
+  // Модалка видна — ждём нажатия кнопки
+} else {
+  tryStartSounds(); // Если модалки нет — запускаем звуки сразу
+}
 
 
 
+
+
+
+
+
+
+
+
+
+
+});
 document.querySelectorAll('.achievement-card').forEach(card => {
   card.addEventListener('click', function(e) {
     // Снимаем active со всех карточек
@@ -412,38 +476,3 @@ function startArrowAnimation() {
 
 startArrowAnimation();
 window.addEventListener('resize', startArrowAnimation);
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  const welcomeModal = document.getElementById("welcome-modal");
-  const welcomeBtn = document.getElementById("welcome-close-btn");
-
-  if (!welcomeModal || !welcomeBtn) return;
-
-  let countdown = 15;
-  welcomeBtn.textContent = `Понял (${countdown})`;
-  welcomeBtn.disabled = true;
-
-  const interval = setInterval(() => {
-    countdown--;
-    if (countdown <= 0) {
-      clearInterval(interval);
-      welcomeBtn.disabled = false;
-      welcomeBtn.textContent = "Понял";
-    } else {
-      welcomeBtn.textContent = `Понял (${countdown})`;
-    }
-  }, 1000);
-
-  // Показать модалку
-  welcomeModal.classList.remove("hidden");
-  document.body.style.overflow = "hidden";
-
-  // Закрытие модалки
-  welcomeBtn.addEventListener("click", () => {
-    welcomeModal.classList.add("hidden");
-    document.body.style.overflow = "";
-  });
-
-  
-});
